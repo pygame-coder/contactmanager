@@ -8,7 +8,7 @@ import os
 app_path = os.path.join(os.path.dirname(__file__), '.')
 dotenv_path = os.path.join(app_path, '.env')
 load_dotenv(dotenv_path)
-app = Flask("contact_manager")
+app = Flask(__name__)
 moment = Moment(app)
 app.secret_key = os.environ.get("SECRETKEY")
 
@@ -25,7 +25,6 @@ collection = database["contacts"]
 def index():
     if request.method == "GET":
         allcontacts = list(collection.find({}))
-        print(allcontacts)
         return render_template("index.html", allcontacts = allcontacts)
     if request.method == "POST":
         name = request.form["name"]
@@ -53,4 +52,5 @@ def edit():
         collection.update_one({"_id":ObjectId(noteid)}, {"$set": {"name" : name, "number" : number}})
         return redirect("/")
 
-app.run(host = "0.0.0.0", debug=True)
+if __name__ == "__main__":
+    app.run(debug=True)
